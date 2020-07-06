@@ -3,7 +3,6 @@ package simpleforce
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -134,27 +133,27 @@ func (obj *SObject) Create() *SObject {
 
 // Update updates SObject in place. Upon successful, same SObject is returned for chained access.
 // ID is required.
-func (obj *SObject) Update() *SObject {
+func (obj *SObject) Update(key string, val interface{}) *SObject {
 	if obj.Type() == "" || obj.client() == nil || obj.ID() == "" {
 		// Sanity check.
 		return nil
 	}
 
+	m := make(map[string]interface{})
+	m[key] = val
 	// Make a copy of the incoming SObject, but skip certain metadata fields as they're not understood by salesforce.
-	reqObj := obj.makeCopy()
+	reqObj := m
 	reqData, err := json.Marshal(reqObj)
 	if err != nil {
 		log.Println(logPrefix, "failed to convert sobject to json,", err)
 		return nil
 	}
-	fmt.Println(string(reqData))
 
 	queryBase := "sobjects/"
 	if obj.client().useToolingAPI {
 		queryBase = "tooling/sobjects/"
 	}
 	url := obj.client().makeURL(queryBase + obj.Type() + "/" + obj.ID())
-	fmt.Println(url)
 	respData, err := obj.client().httpRequest(http.MethodPatch, url, bytes.NewReader(reqData))
 	if err != nil {
 		log.Println(logPrefix, "failed to process http request,", err)
