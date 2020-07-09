@@ -215,7 +215,7 @@ func (client *Client) httpRequest(method, url string, body io.Reader) ([]byte, e
 		log.Println(logPrefix, "status:", resp.StatusCode)
 		return nil, ErrFailure
 	}
-
+	log.Printf("status code from salesforce is: %d", resp.StatusCode)
 	return ioutil.ReadAll(resp.Body)
 }
 
