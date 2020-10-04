@@ -207,14 +207,13 @@ func (client *Client) httpRequest(method, url string, body io.Reader) ([]byte, e
 
 	resp, err := client.httpClient.Do(req)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		log.Println(logPrefix, "status:", resp.StatusCode)
-		return nil, ErrFailure
+		return nil, err
 	}
 	log.Printf("status code from salesforce is: %d", resp.StatusCode)
 	return ioutil.ReadAll(resp.Body)
