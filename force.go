@@ -207,6 +207,7 @@ func (client *Client) httpRequest(method, url string, body io.Reader) ([]byte, e
 
 	resp, err := client.httpClient.Do(req)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
